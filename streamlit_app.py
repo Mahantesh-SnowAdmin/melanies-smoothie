@@ -49,5 +49,6 @@ if ingredients_list:
      ingredients_string=''
     for friut_choosen in ingredients_list:
         ingredients_string += friut_choosen + ' '
-        fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
+        st.subheader(friut_choosen + 'Nutrition information')
+        fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon" + friut_choosen)
         fv_df = st.dataframe(data=fruityvice_response.json() , use_container_width=True)
