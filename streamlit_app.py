@@ -55,7 +55,7 @@ if ingredients_list:
 import requests
 
 if ingredients_list:
-     ingredients_string=''
+    ingredients_string=''
     for friut_choosen in ingredients_list:
         ingredients_string += friut_choosen + ' '
         st.subheader(friut_choosen + 'Nutrition information')
