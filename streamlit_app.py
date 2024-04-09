@@ -4,7 +4,7 @@ from snowflake.snowpark.context import get_active_session
 
 st.title(":cup_with_straw: Customise Your Smoothie! :cup_with_straw:")
 st.write(
-    """Choose the Fruits You Want in Custome Smoothie."""
+    """Choose the Fruits You Want in Custom Smoothie."""
 )
 
 name_on_order = st.text_input('Name on Smoothie')
@@ -31,9 +31,19 @@ if ingredients_list:
         
         search_on = pd_df.loc[pd_df['FRUIT_NAME'] == fruit_choosen, 'SEARCH_ON'].iloc[0]
         
-        st.subheader(fruit_choosen + ' Nutrition Information')
-        fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + search_on)
-        fv_df = st.dataframe(data=fruityvice_response.json(), use_container_width=True)
+        try:
+            fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + search_on)
+            if fruityvice_response.status_code == 200:
+                fv_data = fruityvice_response.json()
+                if fv_data:
+                    st.subheader(fruit_choosen + ' Nutrition Information')
+                    fv_df = st.dataframe(data=fv_data, use_container_width=True)
+                else:
+                    st.warning("No data found for " + fruit_choosen)
+            else:
+                st.error("Failed to fetch data for " + fruit_choosen + ". Status code: " + str(fruityvice_response.status_code))
+        except Exception as e:
+            st.error("An error occurred while fetching data for " + fruit_choosen + ": " + str(e))
 
     st.write(ingredients_string)
 
