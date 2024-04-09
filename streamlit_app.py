@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+from snowflake.snowpark.context import get_active_session
 
 st.title(":cup_with_straw: Customise Your Smoothie! :cup_with_straw:")
 st.write(
@@ -18,7 +19,7 @@ my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT
 pd_df = my_dataframe.to_pandas()
 
 ingredients_list = st.multiselect(
-    'Choose upto five ingredients',
+    'Choose up to five ingredients',
     my_dataframe,
     max_selections=5)
 
@@ -29,17 +30,17 @@ if ingredients_list:
         ingredients_string += fruit_choosen + ' '
         
         search_on = pd_df.loc[pd_df['FRUIT_NAME'] == fruit_choosen, 'SEARCH_ON'].iloc[0]
-        st.write('The search value for {} is {}.'.format(fruit_choosen, search_on))
+        
         st.subheader(fruit_choosen + ' Nutrition Information')
-        fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + fruit_choosen)
+        fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + search_on)
         fv_df = st.dataframe(data=fruityvice_response.json(), use_container_width=True)
 
     st.write(ingredients_string)
 
-    my_insert_stmt = """ insert into smoothies.public.orders(ingredients,name_on_order)
-            values ('""" + ingredients_string + """','""" + name_on_order + """')"""
+    my_insert_stmt = """INSERT INTO smoothies.public.orders(ingredients, name_on_order)
+                       VALUES ('{}', '{}')""".format(ingredients_string, name_on_order)
    
     time_to_insert = st.button('Submit Order')
     if time_to_insert:
         session.sql(my_insert_stmt).collect()
-        st.success("✅" 'Your Smoothie is ordered,' + name_on_order + '!')
+        st.success("✅ Your Smoothie is ordered, " + name_on_order + "!")
