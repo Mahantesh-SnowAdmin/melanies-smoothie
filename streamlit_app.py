@@ -49,38 +49,9 @@ if ingredients_list:
     st.write(ingredients_string)
 
     my_insert_stmt = """INSERT INTO smoothies.public.orders(ingredients, name_on_order)
-                       VALUES (%s, %s)"""
+                       VALUES ('{}', '{}')""".format(ingredients_string, name_on_order)
    
     time_to_insert = st.button('Submit Order')
     if time_to_insert:
-        try:
-            session.execute_string(my_insert_stmt, (ingredients_string, name_on_order))
-            st.success("✅ Your Smoothie is ordered, " + name_on_order + "!")
-        except Exception as e:
-            st.error("Failed to submit the order: " + str(e))
-
-# Write directly to the app
-st.title(":cup_with_straw: Pending SMOOTHIE Orders :cup_with_straw:")
-st.write(
-    """Orders that need to be filled."""
-)
-
-try:
-    my_dataframe = session.table("smoothies.public.ORDERS").filter(col('ORDER_FILLED')==0).collect()
-
-    if my_dataframe:
-        editable_df = st.data_editor(my_dataframe)
-        submitted = st.button('Submit')
-        if submitted:
-            og_dataset = session.table("smoothies.public.orders")
-            edited_dataset = session.create_dataframe(editable_df)
-            og_dataset.merge(edited_dataset,
-                             (og_dataset['order_uid'] == edited_dataset['order_uid']),
-                             [when_matched().update({'ORDER_FILLED': edited_dataset['ORDER_FILLED']})])
-            st.success('Order(s) Updated', icon="👍")
-    
-    else:
-        st.success('There are no pending Orders right now', icon="👍")
-
-except Exception as e:
-    st.error("An error occurred: " + str(e))
+        session.sql(my_insert_stmt).collect()
+        st.success("✅ Your Smoothie is ordered, " + name_on_order + "!")
