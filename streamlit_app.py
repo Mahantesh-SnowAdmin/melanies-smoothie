@@ -63,12 +63,6 @@ if ingredients_list:
         except Exception as e:
             st.error("Failed to submit the order: " + str(e))
 
-# Write directly to the app
-st.title(":cup_with_straw: Pending SMOOTHIE Orders :cup_with_straw:")
-st.write(
-    """Orders that need to be filled."""
-)
-
 try:
     my_dataframe = session.table("smoothies.public.ORDERS").filter(col('ORDER_FILLED')==0).collect()
     st.write("Pending Orders DataFrame:", my_dataframe)
