@@ -60,9 +60,6 @@ if ingredients_list:
         except Exception as e:
             st.error("Failed to submit the order: " + str(e))
 
-# Close the Snowflake connection
-cnx.close()
-
 # Write directly to the app
 st.title(":cup_with_straw: Pending SMOOTHIE Orders :cup_with_straw:")
 st.write(
