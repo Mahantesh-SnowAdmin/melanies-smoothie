@@ -54,8 +54,7 @@ if ingredients_list:
     time_to_insert = st.button('Submit Order')
     if time_to_insert:
         try:
-            with session.cursor() as cursor:
-                cursor.execute(my_insert_stmt, (ingredients_string, name_on_order))
+            session.execute(my_insert_stmt, (ingredients_string, name_on_order))
             st.success("✅ Your Smoothie is ordered, " + name_on_order + "!")
         except Exception as e:
             st.error("Failed to submit the order: " + str(e))
@@ -67,7 +66,6 @@ st.write(
 )
 
 try:
-    session = get_active_session()
     my_dataframe = session.table("smoothies.public.ORDERS").filter(col('ORDER_FILLED')==0).collect()
 
     if my_dataframe:
@@ -86,5 +84,3 @@ try:
 
 except Exception as e:
     st.error("An error occurred: " + str(e))
-    
-        
