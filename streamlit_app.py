@@ -54,7 +54,7 @@ if ingredients_list:
     time_to_insert = st.button('Submit Order')
     if time_to_insert:
         try:
-            session.execute_string(my_insert_stmt, (ingredients_string, name_on_order))
+            session.execute(my_insert_stmt, (ingredients_string, name_on_order))
             st.success("✅ Your Smoothie is ordered, " + name_on_order + "!")
         except Exception as e:
             st.error("Failed to submit the order: " + str(e))
