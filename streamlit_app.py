@@ -29,21 +29,26 @@ if ingredients_list:
     for fruit_choosen in ingredients_list:
         ingredients_string += fruit_choosen + ' '
         
-        search_on = pd_df.loc[pd_df['FRUIT_NAME'] == fruit_choosen, 'SEARCH_ON'].iloc[0]
+        search_on_row = pd_df.loc[pd_df['FRUIT_NAME'] == fruit_choosen, 'SEARCH_ON']
         
-        try:
-            fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + search_on)
-            if fruityvice_response.status_code == 200:
-                fv_data = fruityvice_response.json()
-                if fv_data:
-                    st.subheader(fruit_choosen + ' Nutrition Information')
-                    fv_df = st.dataframe(data=fv_data, use_container_width=True)
+        if not search_on_row.empty and not search_on_row.isnull().values[0]:
+            search_on = search_on_row.iloc[0]
+            
+            try:
+                fruityvice_response = requests.get("https://fruityvice.com/api/fruit/" + search_on)
+                if fruityvice_response.status_code == 200:
+                    fv_data = fruityvice_response.json()
+                    if fv_data:
+                        st.subheader(fruit_choosen + ' Nutrition Information')
+                        fv_df = st.dataframe(data=fv_data, use_container_width=True)
+                    else:
+                        st.warning("No data found for " + fruit_choosen)
                 else:
-                    st.warning("No data found for " + fruit_choosen)
-            else:
-                st.error("Failed to fetch data for " + fruit_choosen + ". Status code: " + str(fruityvice_response.status_code))
-        except Exception as e:
-            st.error("An error occurred while fetching data for " + fruit_choosen + ": " + str(e))
+                    st.error("Failed to fetch data for " + fruit_choosen + ". Status code: " + str(fruityvice_response.status_code))
+            except Exception as e:
+                st.error("An error occurred while fetching data for " + fruit_choosen + ": " + str(e))
+        else:
+            st.warning("No search value found for " + fruit_choosen)
 
     st.write(ingredients_string)
 
@@ -54,5 +59,3 @@ if ingredients_list:
     if time_to_insert:
         session.sql(my_insert_stmt).collect()
         st.success("✅ Your Smoothie is ordered, " + name_on_order + "!")
-        session.sql(my_insert_stmt).collect()
-        st.success("✅" 'Your Smoothie is ordered,' + name_on_order + '!')
