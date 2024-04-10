@@ -35,3 +35,6 @@ try:
 
 except Exception as e:
     st.error("An error occurred: " + str(e))
+
+except Exception as e:
+    st.error("An error occurred: " + str(e))
