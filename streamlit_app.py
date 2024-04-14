@@ -42,22 +42,3 @@ if ingredients_list:
         session.sql(my_insert_stmt).collect()
         st.success("✅"'Your Smoothie is ordered,'+ name_on_order +'!')
 
-                if fv_data:
-                    st.subheader(fruit_choosen + ' Nutrition Information')
-                    fv_df = st.dataframe(data=fv_data, use_container_width=True)
-                else:
-                    st.warning("No data found for " + fruit_choosen)
-            else:
-                st.error("Failed to fetch data for " + fruit_choosen + ". Status code: " + str(fruityvice_response.status_code))
-        except Exception as e:
-            st.error("An error occurred while fetching data for " + fruit_choosen + ": " + str(e))
-
-    st.write(ingredients_string)
-
-    my_insert_stmt = """INSERT INTO smoothies.public.orders(ingredients, name_on_order)
-                       VALUES ('{}', '{}')""".format(ingredients_string, name_on_order)
-   
-    time_to_insert = st.button('Submit Order')
-    if time_to_insert:
-        session.sql(my_insert_stmt).collect()
-        st.success("✅ Your Smoothie is ordered, " + name_on_order + "!")
