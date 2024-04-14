@@ -19,6 +19,23 @@ session = cnx.session()
 my_dataframe = session.table("smoothies.public.orders").filter(col("ORDER_FILLED")==0).collect()
 if my_dataframe:
     editable_df=st.data_editor(my_dataframe)
+    submitted = st.button('SUBMIT')
+    
+    if submitted:
+        og_dataset = session.table("smoothies.public.orders")
+        edited_dataset = session.create_dataframe(editable_df)
+        try:  
+            og_dataset.merge(edited_dataset
+                     , (og_dataset['order_uid'] == edited_dataset['order_uid'])
+                     , [when_matched().update({'ORDER_FILLED': edited_dataset['ORDER_FILLED']})]
+                    )
+            st.success("Order(s) Updated",icon = "👍")
+        except:
+            st.write('Something went Wrong.')
+
+else:
+    st.success('There are no PENDING ORDERS Right Now',icon = "👍")
+
     
 my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'), col('SEARCH_ON'))
 #st.dataframe(data=my_dataframe, use_container_width=True)
