@@ -18,9 +18,13 @@ session = cnx.session()
 
 my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT_NAME'), col('SEARCH_ON'))
 
+fruit_names = []
+for index, row in my_dataframe.iterrows():
+    fruit_names.append(row['FRUIT_NAME'])
+
 ingredients_list = st.multiselect(
     'Choose up to 5 ingredients',
-    my_dataframe['FRUIT_NAME'].to_list(),  # Corrected to_list() method
+    fruit_names,
     max_selections=5
 )
 
