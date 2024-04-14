@@ -44,8 +44,12 @@ if ingredients_list:
         session.sql(my_insert_stmt).collect()
         st.success("✅"'Your Smoothie is ordered,'+ name_on_order +'!')
 
-# New Section to display fruityvice Nutrition Information
+
 import requests
-fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
-# st.text(fruityvice_response.json())
-fd_df = st.dataframe(data=fruityvice_response.json(), use_container_width=True)
+
+if ingredients_list:
+    ingredients_string=''
+    for friut_choosen in ingredients_list:
+        ingredients_string += friut_choosen + ' '
+        fruityvice_response = requests.get("https://fruityvice.com/api/fruit/watermelon")
+        fd_df = st.dataframe(data=fruityvice_response.json(), use_container_width=True)
