@@ -20,7 +20,7 @@ my_dataframe = session.table("smoothies.public.fruit_options").select(col('FRUIT
 
 ingredients_list = st.multiselect(
     'Choose up to 5 ingredients',
-    my_dataframe['FRUIT_NAME'].tolist(),  # Extracting only the fruit names
+    my_dataframe['FRUIT_NAME'].to_list(),  # Corrected to_list() method
     max_selections=5
 )
 
