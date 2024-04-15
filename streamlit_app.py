@@ -61,7 +61,9 @@ if ingredients_list:
 st.title(":cup_with_straw: Pendng Smoothie Orders :cup_with_straw:")
 st.write("""Orders That Need To Be Filled.""")
 
-session = get_active_session()
+cnx = st.connection("snowflake")
+session = cnx.session()
+
 my_dataframe = session.table("smoothies.public.orders").filter(col("ORDER_FILLED")==0).collect()
 if my_dataframe:
     editable_df=st.data_editor(my_dataframe)
